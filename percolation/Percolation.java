@@ -3,6 +3,7 @@ public class Percolation {
     private final boolean[] data;
     private final int n;
     private final WeightedQuickUnionUF quickFind;
+    private final WeightedQuickUnionUF fullCheckFind;
 
     /**
     * create N-by-N grid, with all sites blocked
@@ -14,6 +15,7 @@ public class Percolation {
         this.n = N;
         this.data = new boolean[N*N];
         this.quickFind = new WeightedQuickUnionUF((N*N)+2);
+        this.fullCheckFind = new WeightedQuickUnionUF((N*N)+1);
     }
 
     /**
@@ -25,13 +27,15 @@ public class Percolation {
         this.data[position] = true;
         if (i == 1) {
             this.quickFind.union(0, position+1);
+            this.fullCheckFind.union(0, position+1);
         }
-        if (i == this.n && !percolates()) {
+        if (i == this.n) {
             this.quickFind.union((n*n)+1, position+1);
         }
         for (final int p: this.openNeighbours(i, j)) {
             if (p != -1) {
                 this.quickFind.union(position+1, p+1);
+                this.fullCheckFind.union(position+1, p+1);
             }
         }
     }
@@ -66,7 +70,7 @@ public class Percolation {
     **/
     public boolean isFull(final int i, final int j) {
         assertIndex(i, j);
-        return this.quickFind.connected(position(i, j)+1, 0);
+        return this.fullCheckFind.connected(position(i, j)+1, 0);
     }
 
     /**
