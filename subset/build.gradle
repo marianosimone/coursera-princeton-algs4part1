@@ -1,0 +1,7 @@
+zip {
+    include "Deque.java", "RandomizedQueue.java", "Subset.java"
+}
+
+runSubset {
+    args 8
+}
