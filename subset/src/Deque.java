@@ -1,28 +1,35 @@
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 /**
 * A double-ended queue or deque (pronounced "deck") is a generalization of a stack and a queue
 * that supports inserting and removing items from either the front or the back of the data structure.
+* As per requirements:
+* - Implementation must:
+*  - Support each deque operation in constant worst-case time
+*  - Use space proportional to the number of items currently in the deque.
+* - Iterator implementation must:
+*  - Support the operations next() and hasNext() (plus construction) in constant worst-case time
+*  - Use a constant amount of extra space per iterator. 
 **/
 public class Deque<Item> implements Iterable<Item> {
-/*
-throw an UnsupportedOperationException if the client calls the remove() method in the iterator;
-throw a java.util.NoSuchElementException if the client calls the next() method in the iterator and there are no more items to return.
-Your deque implementation must support each deque operation in constant worst-case time and use space proportional to the number of items currently in the deque. Additionally, your iterator implementation must support the operations next() and hasNext() (plus construction) in constant worst-case time and use a constant amount of extra space per iterator. 
-*/
+
+    private final LinkedList<Item> list;
 
     // construct an empty deque
     public Deque() {
+        this.list = new LinkedList<Item>();
     }
 
     // is the deque empty?
     public boolean isEmpty() {
-        return false;
+        return this.list.isEmpty();
     }
 
     // return the number of items on the deque
     public int size() {
-        return 0;
+        return this.list.size();
     }
 
     /**
@@ -33,6 +40,7 @@ Your deque implementation must support each deque operation in constant worst-ca
         if (item == null) {
             throw new NullPointerException("Can't insert an empty element into Deque");
         }
+        this.list.addFirst(item);
     }
 
     /**
@@ -43,6 +51,7 @@ Your deque implementation must support each deque operation in constant worst-ca
         if (item == null) {
             throw new NullPointerException("Can't insert an empty element into Deque");
         }
+        this.list.addLast(item);
     }
 
     /**
@@ -50,7 +59,10 @@ Your deque implementation must support each deque operation in constant worst-ca
     * @throws java.util.NoSuchElementException if the client attempts to remove an item from an empty deque
     **/
     public Item removeFirst() {
-        return null;
+        if (this.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return this.list.pollFirst();
     }
 
     /**
@@ -58,11 +70,42 @@ Your deque implementation must support each deque operation in constant worst-ca
     * @throws java.util.NoSuchElementException if the client attempts to remove an item from an empty deque
     **/
     public Item removeLast() {
-        return null;
+        if (this.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return this.list.pollLast();
+    }
+
+    private class DequeIterator implements Iterator<Item> {
+        private final Iterator<Item> iterator;
+
+        DequeIterator(final Deque<Item> deque) {
+            this.iterator = deque.list.iterator();
+        }
+
+        public boolean hasNext() {
+            return this.iterator.hasNext();
+        }
+
+        /**
+        * @throws java.util.NoSuchElementException if there are no more items to return
+        */
+        public Item next() {
+            if (!this.hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return this.iterator.next();
+        }
+        /**
+        * @throws UnsupportedOperationException
+        */
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     // return an iterator over items in order from front to end
     public Iterator<Item> iterator() {
-        return null;
+        return new DequeIterator(this);
     }
 }
