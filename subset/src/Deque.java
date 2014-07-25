@@ -38,7 +38,7 @@ public class Deque<Item> implements Iterable<Item> {
     */
     public void addFirst(Item item) {
         if (item == null) {
-            throw new NullPointerException("Can't insert an empty element into Deque");
+            throw new NullPointerException();
         }
         this.list.addFirst(item);
     }
@@ -49,7 +49,7 @@ public class Deque<Item> implements Iterable<Item> {
     */
     public void addLast(Item item) {
         if (item == null) {
-            throw new NullPointerException("Can't insert an empty element into Deque");
+            throw new NullPointerException();
         }
         this.list.addLast(item);
     }

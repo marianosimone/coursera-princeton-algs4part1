@@ -27,7 +27,7 @@ public class DequeTestCase {
     }
 
     @Test
-    public void removingFirstShouldReturnItAndEmptyTheDeque() {
+    public void removingFirstShouldReturnIt() {
         final Deque<Integer> deque = new Deque<Integer>();
         deque.addFirst(1);
         deque.addLast(2);
@@ -37,7 +37,7 @@ public class DequeTestCase {
     }
 
     @Test
-    public void removingLastShouldReturnItAndEmptyTheDeque() {
+    public void removingLastShouldReturnIt() {
         final Deque<Integer> deque = new Deque<Integer>();
         deque.addFirst(1);
         deque.addLast(2);

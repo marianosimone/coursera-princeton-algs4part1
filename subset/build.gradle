@@ -3,5 +3,5 @@ zip {
 }
 
 runSubset {
-    args 8
+    args 2
 }
