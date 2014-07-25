@@ -77,20 +77,20 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private final Iterator<Item> iterator;
 
         RandomizedQueueIterator(final RandomizedQueue<Item> queue) {
-            final List<Item> list = new ArrayList<Item>(queue.size());
+            final List<Item> innerList = new ArrayList<Item>(queue.size());
             for (int i = 0; i < queue.size(); ++i) {
-                list.add(null);
+                innerList.add(null);
             }
             for (int i = 0; i < queue.size(); ++i) {
                 while (true) {
                     final int index = StdRandom.uniform(0, queue.size());
-                    if (list.get(index) == null) {
-                        list.set(index, queue.list.get(i));
+                    if (innerList.get(index) == null) {
+                        innerList.set(index, queue.list.get(i));
                         break;
                     }
                 }
             }
-            this.iterator = list.iterator();
+            this.iterator = innerList.iterator();
         }
 
         public boolean hasNext() {
