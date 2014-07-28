@@ -1,59 +1,74 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Collections;
 
+import java.util.Arrays;
 
 public class Fast {
-    /**
-    * Examines 4 points at a time and checks whether they all lie on the same line segment,
-    * printing out any such line segments to standard output and drawing them using standard drawing.
-    * To check whether the 4 points p, q, r, and s are collinear, check whether the slopes between p and q, between p and r, and between p and s are all equal. 
-    *
-    **/
+    
     public static void main(String[] args) {
-        In inputFile = new In(args[0]);
-        int numberOfPoints = inputFile.readInt();
-        final ArrayList<Point> points = new ArrayList<Point>(numberOfPoints);
-        while (!inputFile.isEmpty()) {
-            final Point p = new Point(inputFile.readInt(), inputFile.readInt());
-            points.add(p);
-            p.draw();
-        }
+        
+        // rescale coordinates and turn on animation mode
         StdDraw.setXscale(0, 32768);
         StdDraw.setYscale(0, 32768);
-        Collections.sort(points);
 
-        for (int i = 0; i < numberOfPoints-1; ++i) {
-            final Point p = points.get(i);
-            final List<Point> others = new ArrayList<Point>(numberOfPoints-1);  
-            for (int j = i+1; j < numberOfPoints; ++j) {
-                others.add(points.get(j));
+        // read in the input
+        String filename = args[0];
+        In in = new In(filename);
+        int numberOfPoints = in.readInt();
+        
+        final Point[] points = new Point[numberOfPoints];
+        for (int i = 0; i < numberOfPoints; i++) {
+            Point p = new Point(in.readInt(), in.readInt());
+            points[i] = p;
+            p.draw();
+        }
+
+        // sorted by coordinates
+        Arrays.sort(points);
+        
+        final Point[] others = new Point[numberOfPoints];
+
+        for (int i = 0; i < numberOfPoints-3; i++) {
+            for (int j = i; j < numberOfPoints; j++) {
+                others[j] = points[j];
             }
-            Collections.sort(others, p.SLOPE_ORDER);
-            int alignedPoints = 2;
-            final double baseSlope = p.slopeTo(others.get(0));
-            Point q = others.get(0);
-            for (int j = 1; j < others.size(); ++j) {
-                if (p.slopeTo(others.get(j)) == baseSlope) {
-                    alignedPoints += 1;
-                    q = others.get(j);
-                } else {
-                    break;
+
+            final Point origin = others[i];
+            // sort by slope
+            Arrays.sort(others, i+1, numberOfPoints, origin.SLOPE_ORDER);
+            Arrays.sort(others, 0, i, origin.SLOPE_ORDER);
+
+            int firstAfterOrigin = i+1;
+            int farthestInSegment = i+2;
+            int beforeOrigin = 0;
+
+            while (farthestInSegment < numberOfPoints) {
+                final double baseSlope = origin.slopeTo(others[firstAfterOrigin]);
+                // keep going while the slope is the same
+                while (farthestInSegment < numberOfPoints && origin.slopeTo(others[farthestInSegment]) == baseSlope) {
+                    farthestInSegment += 1;
                 }
-            }
-            if (alignedPoints >= 4) {
-                System.out.print(p.toString() + " -> ");
-                for (final Point o: others) {
-                    System.out.print(o.toString());
-                    if (o.compareTo(q) == 0) {
-                        System.out.println();
-                        p.drawTo(o);
-                        break;
-                    } else {
-                        System.out.print(" -> ");
+                // if a segment is found
+                if (farthestInSegment - firstAfterOrigin >= 3) {
+                    // check for overlaping segments
+                    double previousSlope = Double.NEGATIVE_INFINITY;
+                    while (beforeOrigin < i) {
+                        previousSlope = origin.slopeTo(others[beforeOrigin]);
+                        if (previousSlope < baseSlope) {
+                            beforeOrigin += 1;   
+                        } else {
+                            break;
+                        }
                     }
-                } 
+                    if (previousSlope != baseSlope) {
+                        origin.drawTo(others[farthestInSegment-1]);
+                        String output = origin.toString() + " -> ";
+                        for (int l = firstAfterOrigin; l < farthestInSegment-1; l++)
+                            output += others[l].toString() + " -> ";
+                        output += others[farthestInSegment-1].toString();
+                        StdOut.println(output);
+                    }
+                }
+                firstAfterOrigin = farthestInSegment;
+                farthestInSegment += 1;
             }
         }
     }

@@ -18,7 +18,7 @@ public class Brute {
             final Point p = new Point(inputFile.readInt(), inputFile.readInt());
             points[i] = p;
             p.draw();
-            i+= 1;
+            i += 1;
         }
         Arrays.sort(points);
         
