@@ -1,0 +1,11 @@
+zip {
+    include "Point.java", "Fast.java", "Brute.java"
+}
+
+runBrute {
+    args "data/input6.txt"
+}
+
+runFast {
+    args "data/input6.txt"
+}
