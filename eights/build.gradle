@@ -1,0 +1,7 @@
+zip {
+    include "Board.java", "Solver.java"
+}
+
+runEights {
+    args "data/input20.txt"
+}
