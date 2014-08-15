@@ -1,9 +1,11 @@
 import java.lang.Iterable;
 import java.lang.StringBuilder;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Board {
     private final int dimension;
-    private final int[][] blocks;
+    final int[][] blocks;
     private boolean isGoal;
     private int zeroI;
     private int zeroJ;
@@ -56,7 +58,11 @@ public class Board {
 
     // a board obtained by exchanging two adjacent blocks in the same row
     public Board twin() {
-        return this;
+        int originI = this.zeroI-1 >= 0 ? this.zeroI-1: this.zeroI+1;
+        int originJ = this.zeroJ;
+        int destI = originI-1 >= 0 ? originI-1: originI+1;
+        int destJ = originJ-1 >= 0 ? originJ-1: originJ+1;
+        return this.cloneExchanging(originI, destI, originJ, destJ);
     }
 
     // does this board equal y?
@@ -74,7 +80,39 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return null;
+        final List<Board> neighbors = new ArrayList<Board>(4);
+        if (zeroI > 0) {
+            neighbors.add(this.cloneExchanging(this.zeroI, this.zeroI-1, this.zeroJ, this.zeroJ));
+        }
+        if (zeroI < this.dimension-1) {
+            neighbors.add(this.cloneExchanging(this.zeroI, this.zeroI+1, this.zeroJ, this.zeroJ));
+        }
+        if (zeroJ > 0) {
+            neighbors.add(this.cloneExchanging(this.zeroI, this.zeroI, this.zeroJ, this.zeroJ-1));
+        }
+        if (zeroJ < this.dimension-1) {
+            neighbors.add(this.cloneExchanging(this.zeroI, this.zeroI, this.zeroJ, this.zeroJ+1));
+        }
+        return neighbors;
+    }
+
+    private Board cloneExchanging(final int originI, final int destI, final int originJ, final int destJ) {
+        final int[][] blocks = new int[this.dimension][this.dimension];
+        final int originValue = this.blocks[originI][originJ];
+        final int destValue = this.blocks[destI][destJ];
+        for (int i = 0; i < this.dimension; ++i) {
+            blocks[i] = new int[this.dimension];
+            for (int j = 0; j < this.dimension; ++j) {
+                if (i == originI && j == originJ) {
+                    blocks[i][j] = destValue;
+                } else if (i == destI && j == destJ) {
+                    blocks[i][j] = originValue;
+                } else {
+                    blocks[i][j] = this.blocks[i][j];
+                }
+            }
+        }
+        return new Board(blocks);
     }
 
     // string representation of the board (in the output format specified below)

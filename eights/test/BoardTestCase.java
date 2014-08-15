@@ -1,10 +1,14 @@
-import java.util.Iterator;
+import java.util.Collection;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import org.junit.Test;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
 public class BoardTestCase {
 
@@ -47,5 +51,91 @@ public class BoardTestCase {
     @Test
     public void toStringShouldBeWellFormed() {
         assertEquals("2 1 0\n3 4 5\n6 7 8", new Board(new int[][] {{2, 1, 0}, {3, 4, 5}, {6, 7, 8}}).toString());
+    }
+
+    private static <T> Collection<T> toCollection(final Iterable<T> iterable) {
+        final Collection<T> rv = new LinkedList<T>();
+        for (final T t: iterable) {
+            rv.add(t);
+        }
+        return rv;
+    }
+
+    @Test
+    public void zeroInMiddleShouldReturnAllNeighbors() {
+        final Collection<Board> neighbors = toCollection(new Board(new int[][] {{2, 1, 3}, {4, 0, 5}, {6, 7, 8}}).neighbors());
+        assertEquals(4, neighbors.size());
+        assertThat(neighbors, hasItems(
+            new Board(new int[][] {{2, 0, 3}, {4, 1, 5}, {6, 7, 8}}),
+            new Board(new int[][] {{2, 1, 3}, {4, 7, 5}, {6, 0, 8}}),
+            new Board(new int[][] {{2, 1, 3}, {0, 4, 5}, {6, 7, 8}}),
+            new Board(new int[][] {{2, 1, 3}, {4, 5, 0}, {6, 7, 8}})
+        ));
+    }
+
+    @Test
+    public void zeroTopRowShouldReturn3Neighbors() {
+        final Collection<Board> neighbors = toCollection(new Board(new int[][] {{2, 0, 3}, {4, 1, 5}, {6, 7, 8}}).neighbors());
+        assertEquals(3, neighbors.size());
+        assertThat(neighbors, hasItems(
+            new Board(new int[][] {{0, 2, 3}, {4, 1, 5}, {6, 7, 8}}),
+            new Board(new int[][] {{2, 3, 0}, {4, 1, 5}, {6, 7, 8}}),
+            new Board(new int[][] {{2, 1, 3}, {4, 0, 5}, {6, 7, 8}})
+        ));
+    }
+
+    @Test
+    public void zeroInTopCornerShouldReturn2Neighbors() {
+        final Collection<Board> neighbors = toCollection(new Board(new int[][] {{0, 1, 3}, {4, 2, 5}, {6, 7, 8}}).neighbors());
+        assertEquals(2, neighbors.size());
+        assertThat(neighbors, hasItems(
+            new Board(new int[][] {{4, 1, 3}, {0, 2, 5}, {6, 7, 8}}),
+            new Board(new int[][] {{1, 0, 3}, {4, 2, 5}, {6, 7, 8}})
+        ));
+    }
+
+    @Test
+    public void zeroInBottomCornerShouldReturn2Neighbors() {
+        final Collection<Board> neighbors = toCollection(new Board(new int[][] {{4, 1, 3}, {5, 2, 8}, {6, 7, 0}}).neighbors());
+        assertEquals(2, neighbors.size());
+        assertThat(neighbors, hasItems(
+            new Board(new int[][] {{4, 1, 3}, {5, 2, 0}, {6, 7, 8}}),
+            new Board(new int[][] {{4, 1, 3}, {5, 2, 8}, {6, 0, 7}})
+        ));
+    }
+
+    @Test
+    public void zeroInBottomRowShouldReturn3Neighbors() {
+        final Collection<Board> neighbors = toCollection(new Board(new int[][] {{2, 1, 3}, {4, 7, 5}, {6, 0, 8}}).neighbors());
+        assertEquals(3, neighbors.size());
+        assertThat(neighbors, hasItems(
+            new Board(new int[][] {{2, 1, 3}, {4, 0, 5}, {6, 7, 8}}),
+            new Board(new int[][] {{2, 1, 3}, {4, 7, 5}, {0, 6, 8}}),
+            new Board(new int[][] {{2, 1, 3}, {4, 7, 5}, {6, 8, 0}})
+        ));
+    }
+
+    private static int differences(final Board a, final Board b) {
+        int differences = 0;
+        for (int i = 0; i < a.dimension(); ++i) {
+            for (int j = 0; j < a.dimension(); ++j) {
+                if (a.blocks[i][j] != b.blocks[i][j]) {
+                    differences += 1;
+                }
+            }
+        }
+        return differences;
+    }
+
+    @Test
+    public void aTwinShouldOnlyHaveTwoDifferencesFromBottomRow() {
+        final Board original = new Board(new int[][] {{2, 1, 3}, {4, 7, 5}, {6, 0, 8}});
+        assertEquals(2, differences(original, original.twin()));
+    }
+
+    @Test
+    public void aTwinShouldOnlyHaveTwoDifferencesFromTopCorner() {
+        final Board original = new Board(new int[][] {{0, 1, 3}, {4, 7, 5}, {6, 2, 8}});
+        assertEquals(2, differences(original, original.twin()));
     }
 }
