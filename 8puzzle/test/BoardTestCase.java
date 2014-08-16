@@ -50,7 +50,17 @@ public class BoardTestCase {
 
     @Test
     public void toStringShouldBeWellFormed() {
-        assertEquals("2 1 0\n3 4 5\n6 7 8", new Board(new int[][] {{2, 1, 0}, {3, 4, 5}, {6, 7, 8}}).toString());
+        assertEquals("3\n 2  1  0 \n 3  4  5 \n 6  7  8 \n", new Board(new int[][] {{2, 1, 0}, {3, 4, 5}, {6, 7, 8}}).toString());
+    }
+
+    @Test
+    public void toStringShouldBeWellFormedExample4() {
+        assertEquals("3\n 0  1  3 \n 4  2  5 \n 7  8  6 \n", new Board(new int[][] {{0, 1, 3}, {4, 2, 5}, {7, 8, 6}}).toString());
+    }
+
+    @Test
+    public void toStringShouldBeWellFormedExample23() {
+        assertEquals("3\n 5  0  4 \n 2  3  8 \n 7  1  6 \n", new Board(new int[][] {{5, 0, 4}, {2, 3, 8}, {7, 1, 6}}).toString());
     }
 
     private static <T> Collection<T> toCollection(final Iterable<T> iterable) {
@@ -136,6 +146,12 @@ public class BoardTestCase {
     @Test
     public void aTwinShouldOnlyHaveTwoDifferencesFromTopCorner() {
         final Board original = new Board(new int[][] {{0, 1, 3}, {4, 7, 5}, {6, 2, 8}});
+        assertEquals(2, differences(original, original.twin()));
+    }
+
+    @Test
+    public void aTwinShouldOnlyHaveTwoDifferencesForExample4() {
+        final Board original = new Board(new int[][] {{0, 1, 3}, {4, 2, 5}, {7, 8, 6}});
         assertEquals(2, differences(original, original.twin()));
     }
 

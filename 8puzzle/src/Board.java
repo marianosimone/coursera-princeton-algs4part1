@@ -1,5 +1,3 @@
-import java.lang.Iterable;
-import java.lang.StringBuilder;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -64,7 +62,7 @@ public class Board {
                 for (int j = 0; j < this.dimension; ++j) {
                     int value = this.blocks[i][j];
                     if (value != 0) {
-                        distance += Math.abs(i-((value-1)/this.dimension)) + Math.abs(j-((value-1)%this.dimension));
+                        distance += Math.abs(i-((value-1)/this.dimension)) + Math.abs(j-((value-1) % this.dimension));
                     }
                 }
             }
@@ -79,17 +77,17 @@ public class Board {
 
     // a board obtained by exchanging two adjacent blocks in the same row
     public Board twin() {
-        int originI = this.zeroI-1 >= 0 ? this.zeroI-1: this.zeroI+1;
-        int originJ = this.zeroJ;
-        int destI = originI-1 >= 0 ? originI-1: originI+1;
-        int destJ = originJ-1 >= 0 ? originJ-1: originJ+1;
-        return this.cloneExchanging(originI, destI, originJ, destJ);
+        int originI = this.zeroI-1;
+        if (originI < 0) {
+            originI = this.zeroI+1;
+        }
+        return this.cloneExchanging(originI, originI, 0, 1);
     }
 
     // does this board equal y?
     public boolean equals(Object y) {
         if (!(y instanceof Board)) return false;
-        final Board other = (Board)y;
+        final Board other = (Board) y;
         if (!(this.dimension == other.dimension)) return false;
         for (int i = 0; i < this.dimension; ++i) {
             for (int j = 0; j < this.dimension; ++j) {
@@ -118,33 +116,34 @@ public class Board {
     }
 
     private Board cloneExchanging(final int originI, final int destI, final int originJ, final int destJ) {
-        final int[][] blocks = new int[this.dimension][this.dimension];
+        final int[][] newBlocks = new int[this.dimension][this.dimension];
         final int originValue = this.blocks[originI][originJ];
         final int destValue = this.blocks[destI][destJ];
         for (int i = 0; i < this.dimension; ++i) {
-            blocks[i] = new int[this.dimension];
+            newBlocks[i] = new int[this.dimension];
             for (int j = 0; j < this.dimension; ++j) {
                 if (i == originI && j == originJ) {
-                    blocks[i][j] = destValue;
+                    newBlocks[i][j] = destValue;
                 } else if (i == destI && j == destJ) {
-                    blocks[i][j] = originValue;
+                    newBlocks[i][j] = originValue;
                 } else {
-                    blocks[i][j] = this.blocks[i][j];
+                    newBlocks[i][j] = this.blocks[i][j];
                 }
             }
         }
-        return new Board(blocks);
+        return new Board(newBlocks);
     }
 
     // string representation of the board (in the output format specified below)
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < this.dimension; ++i) {
-            for (int j = 0; j < this.dimension; ++j) {
-                builder.append(this.blocks[i][j]).append(' ');
+        final StringBuilder s = new StringBuilder();
+        s.append(this.dimension).append('\n');
+        for (int i = 0; i < this.dimension; i++) {
+            for (int j = 0; j < this.dimension; j++) {
+                s.append(String.format("%2d ", this.blocks[i][j]));
             }
-            builder.setCharAt(builder.length()-1, '\n');
+            s.append('\n');
         }
-        return builder.substring(0, builder.length()-1);
+        return s.toString();
     }
 }
