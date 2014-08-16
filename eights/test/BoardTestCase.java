@@ -138,4 +138,44 @@ public class BoardTestCase {
         final Board original = new Board(new int[][] {{0, 1, 3}, {4, 7, 5}, {6, 2, 8}});
         assertEquals(2, differences(original, original.twin()));
     }
+
+    @Test
+    public void hammingDistanceForGoalBoardShouldBe0() {
+        assertEquals(0, new Board(new int[][] {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}}).hamming());
+    }
+
+    @Test
+    public void hammingDistanceForOneOffSHouldBe1() {
+        assertEquals(1, new Board(new int[][] {{1, 2, 3}, {4, 5, 6}, {7, 0, 8}}).hamming());
+    }
+
+    @Test
+    public void hammingDistanceForTwoOffShouldBe3() {
+        assertEquals(3, new Board(new int[][] {{3, 1, 2}, {4, 5, 6}, {7, 8, 0}}).hamming());
+    }
+
+    @Test
+    public void hammingDistanceForExampleShouldBe5() {
+        assertEquals(5, new Board(new int[][] {{8, 1, 3}, {4, 0, 2}, {7, 6, 5}}).hamming());
+    }
+
+    @Test
+    public void manhattanDistanceForGoalBoardShouldBe0() {
+        assertEquals(0, new Board(new int[][] {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}}).manhattan());
+    }
+
+    @Test
+    public void manhattanDistanceForOneOffSHouldBe2() {
+        assertEquals(1, new Board(new int[][] {{1, 2, 3}, {4, 5, 6}, {7, 0, 8}}).manhattan());
+    }
+
+    @Test
+    public void manhattanDistanceForTwoOffShouldBe4() {
+        assertEquals(4, new Board(new int[][] {{3, 1, 2}, {4, 5, 6}, {7, 8, 0}}).manhattan());
+    }
+
+    @Test
+    public void manhattanDistanceForExampleShouldBe10() {
+        assertEquals(10, new Board(new int[][] {{8, 1, 3}, {4, 0, 2}, {7, 6, 5}}).manhattan());
+    }
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Board {
     private final int dimension;
-    final int[][] blocks;
+    private final int[][] blocks;
     private boolean isGoal;
     private int zeroI;
     private int zeroJ;
@@ -32,7 +32,7 @@ public class Board {
         }
     }
 
-    static int expectedValue(final int dimension, final int i, final int j) {
+    private static int expectedValue(final int dimension, final int i, final int j) {
         return (i*dimension+j)+1;
     }
 
@@ -43,12 +43,33 @@ public class Board {
 
     // number of blocks out of place
     public int hamming() {
-        return 0;
+        int distance = 0;
+        if (!this.isGoal()) {
+            for (int i = 0; i < this.dimension; ++i) {
+                for (int j = 0; j < this.dimension; ++j) {
+                    if ((this.blocks[i][j] != 0) && (this.blocks[i][j] != expectedValue(this.dimension(), i, j))) {
+                        distance += 1;
+                    }
+                }
+            }
+        }
+        return distance;
     }
 
     // sum of Manhattan distances between blocks and goal
     public int manhattan() {
-        return 0;
+        int distance = 0;
+        if (!this.isGoal()) {
+            for (int i = 0; i < this.dimension; ++i) {
+                for (int j = 0; j < this.dimension; ++j) {
+                    int value = this.blocks[i][j];
+                    if (value != 0) {
+                        distance += Math.abs(i-((value-1)/this.dimension)) + Math.abs(j-((value-1)%this.dimension));
+                    }
+                }
+            }
+        }
+        return distance;
     }
 
     // is this board the goal board?
