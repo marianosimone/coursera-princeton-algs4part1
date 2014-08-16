@@ -1,4 +1,4 @@
 include "percolation"
 include "subset"
 include "points"
-include "eights"
+include "8puzzle"
