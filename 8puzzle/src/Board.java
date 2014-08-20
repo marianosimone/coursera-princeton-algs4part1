@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class Board {
     private final int dimension;
-    private final int[][] blocks;
+    final int[][] blocks;
     private boolean isGoal;
     private int zeroI;
     private int zeroJ;
@@ -30,7 +30,7 @@ public class Board {
         }
     }
 
-    private static int expectedValue(final int dimension, final int i, final int j) {
+    static int expectedValue(final int dimension, final int i, final int j) {
         return (i*dimension+j)+1;
     }
 
