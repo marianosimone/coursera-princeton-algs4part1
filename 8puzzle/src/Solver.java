@@ -6,21 +6,31 @@ import java.util.LinkedList;
 */
 public class Solver {
 
-    private class SolverNode {
-        Board state;
-        int stepsTaken;
-        SolverNode previousState;
+    private static class SolverNode {
+        private Board state;
+        private int stepsTaken;
+        private SolverNode previousState;
 
-        SolverNode(final Board state, final int stepsTaken, final SolverNode previousState) {
+        public SolverNode(final Board state, final int stepsTaken, final SolverNode previousState) {
             this.state = state;
             this.stepsTaken = stepsTaken;
             this.previousState = previousState;
         }
+
+        public Board getState() {
+            return this.state;
+        }
+        public int getStepsTaken() {
+            return this.stepsTaken;
+        }
+        public SolverNode getPreviousState() {
+            return this.previousState;
+        }
     }
 
-    private class ManhattanSolverNodeComparator implements Comparator<SolverNode> {
+    private static class ManhattanSolverNodeComparator implements Comparator<SolverNode> {
         public int compare(final SolverNode o1, final SolverNode o2) {
-            return (o1.state.manhattan()+o1.stepsTaken) - (o2.state.manhattan()+o2.stepsTaken);
+            return (o1.getState().manhattan()+o1.getStepsTaken()) - (o2.state.manhattan()+o2.getStepsTaken());
         }
     }
 
@@ -30,20 +40,28 @@ public class Solver {
     public Solver(Board initial) {
         MinPQ<SolverNode> queue = new MinPQ<SolverNode>(initial.dimension(), new ManhattanSolverNodeComparator());
         queue.insert(new SolverNode(initial, 0, null));
+        MinPQ<SolverNode> alternateQueue = new MinPQ<SolverNode>(initial.dimension(), new ManhattanSolverNodeComparator());
+        alternateQueue.insert(new SolverNode(initial.twin(), 0, null));
         SolverNode tmpSolution = null;
-        while (!queue.isEmpty()) {
-            final SolverNode currentNode = queue.delMin();
-            if (currentNode.state.isGoal()) {
-                tmpSolution = currentNode;
-                break;
-            }
-            for (final Board neighbor: currentNode.state.neighbors()) {
-                if (currentNode.previousState == null || !neighbor.equals(currentNode.previousState)) {
-                    queue.insert(new SolverNode(neighbor, currentNode.stepsTaken+1, currentNode));
-                }
-            }
+        SolverNode alternateSolution = null;
+        while (tmpSolution == null && alternateSolution == null) {
+            tmpSolution = Solver.stepForward(queue);
+            alternateSolution = Solver.stepForward(alternateQueue);
         }
         this.solution = tmpSolution;
+    }
+
+    private static SolverNode stepForward(final MinPQ<SolverNode> queue) {
+        final SolverNode currentNode = queue.delMin();
+        if (currentNode.getState().isGoal()) {
+            return currentNode;
+        }
+        for (final Board neighbor: currentNode.getState().neighbors()) {
+            if (currentNode.getPreviousState() == null || !neighbor.equals(currentNode.getPreviousState().getState())) {
+                queue.insert(new SolverNode(neighbor, currentNode.getStepsTaken()+1, currentNode));
+            }
+        }
+        return null;
     }
 
     // is the initial board solvable?
@@ -54,7 +72,7 @@ public class Solver {
     // min number of moves to solve initial board; -1 if no solution
     public int moves() {
         if (this.isSolvable()) {
-            return this.solution.stepsTaken;
+            return this.solution.getStepsTaken();
         } else {
             return -1;
         }
@@ -66,11 +84,11 @@ public class Solver {
             final LinkedList<Board> steps = new LinkedList<Board>();
             SolverNode node = solution;
             while (node != null) {
-                steps.addFirst(node.state);
+                steps.addFirst(node.getState());
                 node = node.previousState;
             }
             return steps;
-        } else{
+        } else {
             return null;
         }
     }

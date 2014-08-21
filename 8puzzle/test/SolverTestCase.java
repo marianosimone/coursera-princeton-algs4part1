@@ -25,4 +25,10 @@ public class SolverTestCase {
         assertTrue(solver.isSolvable());
         assertEquals(1, solver.moves());
     }
+
+    @Test
+    public void unsolvablePuzzleCantBeSolved() {
+        final Solver solver = new Solver(new Board(new int[][] {{1, 2, 3}, {4, 6, 5}, {7, 8, 0}})); 
+        assertFalse(solver.isSolvable());
+    }
 }
